@@ -268,34 +268,34 @@ state = update_state(state, [fluxes_mr, fluxes_gr, fluxes_alloc], dt)
 
 ### ⏳ TODO (Next Steps)
 
-1. **Allocation** (2 weeks)
+1. **Allocation** 
    - Available C calculation
    - Allocation coefficients
    - C/N distribution
 
-2. **Growth respiration** (1 week)
+2. **Growth respiration** 
    - Based on allocation
 
-3. **Phenology** (3 weeks)
+3. **Phenology** 
    - Leaf onset/offset
    - Crop phenology
    - LAI dynamics
 
-4. **Soil biogeochemistry** (4 weeks)
+4. **Soil biogeochemistry** 
    - Decomposition
    - Nitrification/denitrification
    - Vertical transport
 
-5. **Fire** (2 weeks)
+5. **Fire** 
    - Fire probability
    - Emissions
    - Mortality
 
 ### Estimated Timeline
 
-- **3 months**: Core processes (allocation, phenology, soil)
-- **6 months**: Complete CN cycle
-- **12 months**: Full parity with Fortran CTSM
+- **TBD**: Core processes (allocation, phenology, soil)
+- **TBD**: Complete CN cycle
+- **TBD**: Full parity with Fortran CTSM
 
 ---
 
