@@ -1,0 +1,66 @@
+# Default parameters for JAX-CTSM
+# Based on CTSM default parameter file
+
+# Maintenance Respiration Parameters
+maintenance_respiration:
+  # Base rate for aboveground tissues [gC/gN/s]
+  # From Ryan 1991: 0.0106 molC/(molN h) = 2.525e-6 gC/(gN s)
+  br: 2.525e-6
+  
+  # Base rate for fine roots [gC/gN/s]
+  # Can be set independently from br
+  br_root: 2.525e-6
+  
+  # Temperature sensitivity coefficient Q10 [-]
+  # Reduced from 2.0 to 1.5 for better seasonal CO2 cycle
+  q10: 1.5
+  
+  # Reference temperature for Q10 [°C]
+  reference_temp: 20.0
+  
+  # Root/stem acclimation coefficient [1/°C]
+  # Used when use_acclimation=True
+  acclimation_coef: 0.00794
+  
+  # Enable temperature acclimation for roots/stems
+  # Significantly affects boreal forest productivity
+  use_acclimation: false
+  
+  # Conversion factor umol CO2 to gC
+  umol_to_gC: 12.011e-6
+
+# Spatial Configuration
+spatial:
+  # Number of soil layers
+  n_levgrnd: 10
+  
+  # Soil layer depths [m]
+  soil_depths: [0.01, 0.04, 0.09, 0.16, 0.26, 0.40, 0.58, 0.80, 1.06, 1.36]
+  
+  # Number of crop reproductive pools
+  n_repr: 2
+
+# Physical Constants
+constants:
+  # Freezing point of water [K]
+  tfrz: 273.15
+  
+  # Missing value flag
+  spval: 1.0e36
+
+# PFT (Plant Functional Type) Parameters
+# These would typically be loaded from a parameter file
+pft_params:
+  # Example for needleleaf evergreen temperate tree
+  1:
+    name: "NET Temperate"
+    woody: true
+    is_crop: false
+    evergreen: true
+    
+  # Example for C3 crop
+  15:
+    name: "C3 Crop"
+    woody: false
+    is_crop: true
+    evergreen: false
