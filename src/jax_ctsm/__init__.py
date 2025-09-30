@@ -10,6 +10,10 @@ from jax_ctsm.core import (
     PatchState,
     ColumnState,
     NitrogenState,
+    CarbonState,
+    CanopyState,
+    TemperatureState,
+    SoilState,
     CarbonFlux,
     SpatialInfo,
 )
@@ -36,6 +40,10 @@ __all__ = [
     "PatchState",
     "ColumnState", 
     "NitrogenState",
+    "CarbonState",
+    "CanopyState",
+    "TemperatureState",
+    "SoilState",
     "CarbonFlux",
     "SpatialInfo",
     # Physics

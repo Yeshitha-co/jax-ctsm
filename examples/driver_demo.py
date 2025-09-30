@@ -45,14 +45,23 @@ def create_test_patch(n_patches: int = 1) -> PatchState:
         frootn=jnp.full(n_patches, 0.01),     # 10 g N/m2
         livestemn=jnp.full(n_patches, 0.005), # 5 g N/m2
         livecrootn=jnp.full(n_patches, 0.005),
-        grainn=jnp.zeros((n_patches, 3)),
+        deadstemc=jnp.zeros(n_patches),
+        deadcrootn=jnp.zeros(n_patches),
+        reproductiven=jnp.zeros((n_patches, 3)),
+        retransn=jnp.zeros(n_patches),
     )
     
     # Create carbon state
     carbon = CarbonState(
-        leafc=jnp.full(n_patches, 0.5),    # 500 g C/m2
-        cpool=jnp.full(n_patches, 10.0),   # 10 kg C/m2 available
-        xsmrpool=jnp.zeros(n_patches),     # No deficit initially
+        leafc=jnp.full(n_patches, 0.5),      # 500 g C/m2
+        frootc=jnp.full(n_patches, 0.3),     # 300 g C/m2
+        livestemc=jnp.full(n_patches, 1.0),  # 1 kg C/m2
+        livecrootc=jnp.full(n_patches, 0.8), # 800 g C/m2
+        deadstemc=jnp.zeros(n_patches),
+        deadcrootc=jnp.zeros(n_patches),
+        reproductivec=jnp.zeros((n_patches, 3)),
+        cpool=jnp.full(n_patches, 10.0),     # 10 kg C/m2 available
+        xsmrpool=jnp.zeros(n_patches),       # No deficit initially
     )
     
     # Create canopy state
@@ -80,8 +89,12 @@ def create_test_patch(n_patches: int = 1) -> PatchState:
     # Create spatial info
     spatial = SpatialInfo(
         pft_type=jnp.zeros(n_patches, dtype=jnp.int32),
+        patch_index=jnp.arange(n_patches, dtype=jnp.int32),
         column_index=jnp.arange(n_patches, dtype=jnp.int32),
+        landunit_index=jnp.zeros(n_patches, dtype=jnp.int32),
         gridcell_index=jnp.zeros(n_patches, dtype=jnp.int32),
+        weights=jnp.ones(n_patches),
+        is_vegetated=jnp.ones(n_patches, dtype=bool),
     )
     
     # PFT parameters
