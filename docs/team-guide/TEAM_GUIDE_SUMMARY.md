@@ -7,8 +7,7 @@
 ## 📖 What's Inside
 
 ### 1. **Quick Start for New Team Members** (Pages 1-2)
-- Day 1 setup instructions
-- First week learning plan
+- Setup instructions
 - Environment setup commands
 - Key files to read first
 
@@ -178,25 +177,25 @@ Before submitting PR:
 
 ## 🎓 Training Path
 
-### Week 1: Foundations
+### Foundations
 1. Read Quick Start (Section 1)
 2. Set up environment
 3. Run examples and tests
 4. Read spatial hierarchy docs
 
-### Week 2: Understanding
+### Understanding
 1. Study maintenance respiration module
 2. Compare with Fortran source
 3. Run validation script
 4. Understand JAX patterns (Section 3)
 
-### Week 3: Contributing
+### Contributing
 1. Read development workflow (Section 2)
 2. Study PR template (Section 7)
 3. Make first small contribution
 4. Get code reviewed
 
-### Week 4: Mastery
+### Mastery
 1. Add a test case
 2. Implement small feature
 3. Validate against Fortran
@@ -232,7 +231,7 @@ Before submitting PR:
 
 ---
 
-## 🔗 Quick Links
+## Quick Links
 
 - **Full Guide**: `TEAM_GUIDE.md`
 - **Quick Start**: `QUICKSTART.md`
@@ -242,28 +241,28 @@ Before submitting PR:
 
 ---
 
-## 📞 Getting Help
+## Getting Help
 
 1. **Check** `TEAM_GUIDE.md` first
 2. **Search** closed GitHub issues
-3. **Ask** in Slack #jax-ctsm
+3. **Ask** in Slack
 4. **Create** GitHub issue for bugs
 5. **Discuss** in team meeting for design
 
 ---
 
-## 🎉 Welcome to the Team!
+## Welcome to the Team!
 
 The full `TEAM_GUIDE.md` is comprehensive but approachable. Start with:
 1. Section 1 (Quick Start)
 2. Section 3 (Code Standards) 
 3. Section 5 (AI Best Practices)
 
-Then dive deeper as needed. Happy coding! 🚀
+Then dive deeper as needed.
 
 ---
 
 **Document**: `TEAM_GUIDE.md`  
 **Length**: 1,426 lines  
 **Sections**: 10 + 2 appendices  
-**Last Updated**: October 2024
+**Last Updated**: October 2025
