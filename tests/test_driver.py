@@ -35,7 +35,7 @@ def create_test_patch():
         frootn=jnp.array([0.01, 0.015]),
         livestemn=jnp.array([0.005, 0.008]),
         livecrootn=jnp.array([0.005, 0.008]),
-        deadstemc=jnp.zeros(n_patches),
+        deadstemn=jnp.zeros(n_patches),
         deadcrootn=jnp.zeros(n_patches),
         reproductiven=jnp.zeros((n_patches, 3)),
         retransn=jnp.zeros(n_patches),
@@ -64,7 +64,7 @@ def create_test_patch():
     temp = TemperatureState(
         t_ref2m=jnp.full(n_patches, 298.15),
         t_10day=jnp.full(n_patches, 295.15),
-        t_soisno=jnp.full((n_patches, n_levgrnd), 295.15),
+        t_soisno=jnp.full((n_patches, n_levgrnd), 295.15),  # Note: Using n_patches here as proxy for n_columns (1:1 mapping in this test)
     )
     
     soil = SoilState(

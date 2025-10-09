@@ -153,7 +153,7 @@ def create_realistic_test_case() -> PatchState:
         frootn=jnp.array([0.020]),     # 20 gN/m2
         livestemn=jnp.array([0.050]),  # 50 gN/m2 (woody plants)
         livecrootn=jnp.array([0.030]), # 30 gN/m2
-        deadstemc=jnp.zeros(n_patches),
+        deadstemn=jnp.zeros(n_patches),
         deadcrootn=jnp.zeros(n_patches),
         reproductiven=jnp.zeros((n_patches, 3)),
         retransn=jnp.zeros(n_patches),
@@ -164,7 +164,7 @@ def create_realistic_test_case() -> PatchState:
         frootc=jnp.array([0.5]),
         livestemc=jnp.array([2.0]),
         livecrootc=jnp.array([1.5]),
-        deadstemc=jnp.zeros(n_patches),
+        deadstemn=jnp.zeros(n_patches),
         deadcrootc=jnp.zeros(n_patches),
         reproductivec=jnp.zeros((n_patches, 3)),
         cpool=jnp.array([5.0]),

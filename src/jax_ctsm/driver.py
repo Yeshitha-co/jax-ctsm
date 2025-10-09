@@ -12,6 +12,22 @@ CURRENT STATUS: Working POC with maintenance respiration
 - ✅ Batch processing
 
 FUTURE: Add allocation, phenology, soil biogeochem, fire, etc.
+
+DESIGN NOTE - Column State:
+  Currently, the driver operates only on PatchState. Column-level data
+  (e.g., soil temperature) is embedded in PatchState for convenience.
+  
+  When implementing soil biogeochemistry, the driver will need to be
+  extended to accept and return ColumnState as well:
+  
+    def ecosystem_timestep(
+        patch_state: PatchState,
+        column_state: ColumnState,  # <- Add this
+        params: EcosystemParams,
+        dt: float
+    ) -> Tuple[PatchState, ColumnState, EcosystemFluxes]:  # <- And this
+  
+  This is intentionally deferred to keep the POC simple.
 """
 
 import jax
@@ -88,13 +104,19 @@ def update_carbon_pools(
     # 4. Growth respiration would consume from cpool
     
     # For POC: Respiration comes from cpool
-    # If cpool goes negative, we'd normally use xsmrpool
+    # If cpool is insufficient, track the deficit in xsmrpool
     new_cpool = carbon_state.cpool - total_mr * dt
     
-    # Track deficit in xsmrpool (excess MR demand)
-    deficit = jnp.minimum(new_cpool, 0.0)
-    new_xsmrpool = carbon_state.xsmrpool - deficit
-    new_cpool = jnp.maximum(new_cpool, 0.0)
+    # xsmrpool tracks cumulative carbon deficit (excess MR demand)
+    # When cpool goes negative, we:
+    # 1. Calculate the deficit (negative value)
+    # 2. Add the absolute value to xsmrpool (since deficit is negative, subtracting it adds)
+    # 3. Zero out cpool (can't be negative)
+    # This matches CTSM convention: xsmrpool accumulates carbon that should have
+    # been respired but wasn't available, representing a "carbon debt"
+    deficit = jnp.minimum(new_cpool, 0.0)  # deficit ≤ 0 (negative when cpool insufficient)
+    new_xsmrpool = carbon_state.xsmrpool - deficit  # Subtracting negative adds to pool
+    new_cpool = jnp.maximum(new_cpool, 0.0)  # Floor at zero
     
     # Create updated carbon state
     return carbon_state._replace(
@@ -189,7 +211,6 @@ def ecosystem_timestep(
 # JIT-COMPILED VERSION FOR SPEED
 # ============================================
 
-@jax.jit
 def ecosystem_timestep_jit(
     patch_state: PatchState,
     params: EcosystemParams,
@@ -198,25 +219,32 @@ def ecosystem_timestep_jit(
     """JIT-compiled version of ecosystem_timestep for speed.
     
     First call will be slow (compilation), subsequent calls will be fast.
-    Uses static_argnames to allow different dt values.
+    The dt parameter is static, so changing it will trigger recompilation.
     
     Args:
         patch_state: Patch state
         params: Ecosystem parameters
-        dt: Timestep (seconds)
+        dt: Timestep (seconds) - static argument, recompiles on change
         
     Returns:
         (new_state, fluxes)
         
     Example:
-        >>> # First call: compiles
-        >>> new_state, fluxes = ecosystem_timestep_jit(state, params)
+        >>> # First call: compiles for dt=1800
+        >>> new_state, fluxes = ecosystem_timestep_jit(state, params, dt=1800)
         >>> 
-        >>> # Subsequent calls: fast!
+        >>> # Subsequent calls with same dt: fast!
         >>> for _ in range(100):
-        >>>     new_state, fluxes = ecosystem_timestep_jit(state, params)
+        >>>     new_state, fluxes = ecosystem_timestep_jit(state, params, dt=1800)
+        >>>
+        >>> # Different dt: recompiles
+        >>> new_state, fluxes = ecosystem_timestep_jit(state, params, dt=3600)
     """
     return ecosystem_timestep(patch_state, params, dt)
+
+
+# Create the JIT-compiled version with static_argnames
+ecosystem_timestep_jit = jax.jit(ecosystem_timestep_jit, static_argnames=['dt'])
 
 
 # ============================================
@@ -280,12 +308,12 @@ def run_simulation(
         
     Example:
         >>> # Run for 1 day (48 timesteps of 30 min)
-        >>> final_state, fluxes = run_simulation(
+        >>> final_state, flux_history = run_simulation(
         >>>     patch_state, params, n_timesteps=48, dt=1800
         >>> )
         >>> 
         >>> # Calculate daily total MR
-        >>> daily_mr = sum([f.total_respiration.sum() for f in fluxes]) * dt
+        >>> daily_mr = sum([f.total_respiration.sum() for f in flux_history]) * 1800
         >>> print(f"Daily MR: {daily_mr:.2f} gC/m2/day")
     """
     patch_state = initial_patch_state
@@ -321,17 +349,22 @@ def run_simulation_scan(
         dt: Timestep (seconds)
         
     Returns:
-        (final_state, flux_history)
+        (final_state, flux_history): where flux_history is an EcosystemFluxes
+            with arrays having leading dimension [n_timesteps, ...]
         
     Note:
         This is faster and more memory efficient than run_simulation()
         for long runs, but takes longer to compile on first call.
+        flux_history arrays have shape [n_timesteps, n_patches] instead of
+        being a list of EcosystemFluxes objects.
         
     Example:
         >>> # Run for 1 year (17520 timesteps)
-        >>> final_state, fluxes = run_simulation_scan(
+        >>> final_state, flux_history = run_simulation_scan(
         >>>     patch_state, params, n_timesteps=17520, dt=1800
         >>> )
+        >>> # Access total MR for all timesteps
+        >>> annual_mr = flux_history.total_respiration.sum() * 1800
     """
     def step_fn(state, _):
         """Single timestep function for scan."""
